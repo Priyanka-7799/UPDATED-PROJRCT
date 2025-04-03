@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Zithara.AI Careers</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gradient-to-r from-blue-200 to-purple-200 min-h-screen">
+
+    <!-- Header -->
+    <header class="bg-blue-700 text-white p-5 flex justify-between items-center shadow-lg">
+        <h1 class="text-2xl font-bold">Zithara.AI Careers</h1>
+        <button id="login-btn" class="bg-green-600 px-5 py-2 rounded-lg shadow">Login</button>
+    </header>
+
+    <div class="container mx-auto p-6">
+        <!-- Job Posting Form -->
+        <section class="bg-white p-6 rounded-lg shadow-lg mb-6 border border-gray-300">
+            <h2 class="text-xl font-bold text-blue-700">Post a New Job</h2>
+            <form id="job-form" class="mt-4">
+                <input type="text" id="job-title" placeholder="Job Title" class="w-full p-3 border rounded mb-3 focus:ring focus:ring-blue-300" required>
+                <textarea id="job-description" placeholder="Job Description" class="w-full p-3 border rounded mb-3 focus:ring focus:ring-blue-300" required></textarea>
+                <button type="submit" class="bg-blue-600 text-white px-5 py-2 rounded-lg shadow hover:bg-blue-700">Post Job</button>
+            </form>
+        </section>
+
+        <!-- Job Listings -->
+        <section class="bg-white p-6 rounded-lg shadow-lg border border-gray-300">
+            <h2 class="text-xl font-bold text-blue-700 mb-4">Available Jobs</h2>
+            <div id="job-list"></div>
+        </section>
+    </div>
+
+    <!-- Job Description Modal -->
+    <div id="job-modal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center hidden">
+        <div class="bg-white p-6 rounded-lg shadow-lg w-1/2 border border-gray-300">
+            <h3 id="modal-title" class="text-xl font-bold text-blue-700"></h3>
+            <p id="modal-description" class="mt-3 text-gray-700"></p>
+            <div class="mt-4 flex space-x-4">
+                <button id="apply-btn" class="bg-green-600 text-white px-5 py-2 rounded-lg shadow hidden hover:bg-green-700">Apply</button>
+                <button id="close-modal" class="bg-red-600 text-white px-5 py-2 rounded-lg shadow hover:bg-red-700">Close</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const jobList = document.getElementById("job-list");
+        const jobForm = document.getElementById("job-form");
+        const jobModal = document.getElementById("job-modal");
+        const modalTitle = document.getElementById("modal-title");
+        const modalDescription = document.getElementById("modal-description");
+        const closeModal = document.getElementById("close-modal");
+        const applyBtn = document.getElementById("apply-btn");
+
+        // Job Data
+        let jobs = [
+            { id: 1, title: "Frontend Developer (Intern)", description: "Location: Gachibowli, Hyderabad\nSalary: ₹1.5 - ₹3.5 LPA\nResponsibilities:\n- Build UI using React.js and Next.js.\n- Integrate RESTful APIs and services.\n- Debug and troubleshoot issues." },
+            { id: 2, title: "Backend Developer (Intern)", description: "Location: Gachibowli, Hyderabad\nSalary: ₹1.5 - ₹3.5 LPA\nResponsibilities:\n- Build and maintain backend apps using Node.js.\n- Manage databases like MongoDB/PostgreSQL.\n- Design and implement RESTful APIs." },
+            { id: 3, title: "Fullstack Developer (Intern)", description: "Location: Gachibowli, Hyderabad\nSalary: ₹1.5 - ₹3.5 LPA\nResponsibilities:\n- Work on both frontend (React.js) and backend (Node.js).\n- Integrate RESTful APIs and manage databases.\n- Ensure performance optimization and security." }
+        ];
+
+        // Render Jobs
+        function renderJobs() {
+            jobList.innerHTML = "";
+            jobs.forEach(job => {
+                const jobDiv = document.createElement("div");
+                jobDiv.classList.add("p-5", "border-b", "hover:bg-gray-100", "rounded-lg");
+                jobDiv.innerHTML = `
+                    <h3 class="font-bold text-blue-700">${job.title}</h3>
+                    <button class="apply-btn bg-blue-600 text-white px-4 py-2 mt-3 rounded-lg hover:bg-blue-700" data-id="${job.id}">View Details</button>
+                `;
+                jobList.appendChild(jobDiv);
+            });
+
+            // Add Event Listeners for Apply Buttons
+            document.querySelectorAll(".apply-btn").forEach(button => {
+                button.addEventListener("click", function() {
+                    const jobId = this.dataset.id;
+                    const job = jobs.find(j => j.id == jobId);
+                    modalTitle.innerText = job.title;
+                    modalDescription.innerText = job.description;
+                    applyBtn.dataset.id = job.id;
+                    applyBtn.classList.remove("hidden");
+                    jobModal.classList.remove("hidden");
+                });
+            });
+        }
+
+        // Close Modal
+        closeModal.addEventListener("click", () => {
+            jobModal.classList.add("hidden");
+            applyBtn.classList.add("hidden");
+        });
+
+        // Apply Button Functionality
+        applyBtn.addEventListener("click", function() {
+            alert("Application Submitted for " + modalTitle.innerText);
+            jobModal.classList.add("hidden");
+            applyBtn.classList.add("hidden");
+        });
+
+        // Handle New Job Submission
+        jobForm.addEventListener("submit", function(event) {
+            event.preventDefault();
+            const title = document.getElementById("job-title").value;
+            const description = document.getElementById("job-description").value;
+
+            if (title && description) {
+                jobs.push({ id: jobs.length + 1, title, description });
+                renderJobs();
+                jobForm.reset();
+            }
+        });
+
+        // Render Initial Jobs
+        renderJobs();
+    </script>
+
+</body>
+</html>
